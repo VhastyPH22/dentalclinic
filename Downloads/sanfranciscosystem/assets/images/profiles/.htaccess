@@ -1,0 +1,38 @@
+# Allow direct access to image files
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Allow from all
+    </IfModule>
+</FilesMatch>
+
+# Prevent PHP execution in this directory
+<FilesMatch "\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Set proper MIME types
+AddType image/jpeg .jpg .jpeg
+AddType image/png .png
+AddType image/gif .gif
+AddType image/webp .webp
+
+# Enable compression for images (optional but helpful)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE image/jpeg image/png image/gif image/webp
+</IfModule>
+
+# Cache control for images
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
